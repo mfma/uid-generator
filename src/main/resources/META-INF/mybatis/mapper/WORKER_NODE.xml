@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.baidu.fsg.uid.worker.dao.WorkerNodeDAO">
+<mapper namespace="com.mfma.uidgenerator.worker.dao.WorkerNodeDAO">
 	<resultMap id="workerNodeRes"
-			   type="com.baidu.fsg.uid.worker.entity.WorkerNodeEntity">
+			   type="com.mfma.uidgenerator.worker.entity.WorkerNodeEntity">
 		<id column="ID" jdbcType="BIGINT" property="id" />
 		<result column="HOST_NAME" jdbcType="VARCHAR" property="hostName" />
 		<result column="PORT" jdbcType="VARCHAR" property="port" />
@@ -13,7 +13,7 @@
 	</resultMap>
 
 	<insert id="addWorkerNode" useGeneratedKeys="true" keyProperty="id"
-		parameterType="com.baidu.fsg.uid.worker.entity.WorkerNodeEntity">
+		parameterType="com.mfma.uidgenerator.worker.entity.WorkerNodeEntity">
 		INSERT INTO WORKER_NODE
 		(HOST_NAME,
 		PORT,
