@@ -15,20 +15,21 @@
  */
 package com.mfma.uidgenerator.utils;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicLong;
-
+import com.sun.istack.internal.NotNull;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * Named thread in ThreadFactory. If there is no specified name for thread, it
  * will auto detect using the invoker classname instead.
- * 
+ *
  * @author yutianbao
  */
 public class NamingThreadFactory implements ThreadFactory {
@@ -66,15 +67,15 @@ public class NamingThreadFactory implements ThreadFactory {
         this(name, daemon, null);
     }
 
-    public NamingThreadFactory(String name, boolean daemon, UncaughtExceptionHandler handler) {
+    private NamingThreadFactory(String name, boolean daemon, UncaughtExceptionHandler handler) {
         this.name = name;
         this.daemon = daemon;
         this.uncaughtExceptionHandler = handler;
-        this.sequences = new ConcurrentHashMap<String, AtomicLong>();
+        this.sequences = new ConcurrentHashMap<>();
     }
 
     @Override
-    public Thread newThread(Runnable r) {
+    public Thread newThread(@NotNull Runnable r) {
         Thread thread = new Thread(r);
         thread.setDaemon(this.daemon);
 
@@ -90,11 +91,7 @@ public class NamingThreadFactory implements ThreadFactory {
         if (this.uncaughtExceptionHandler != null) {
             thread.setUncaughtExceptionHandler(this.uncaughtExceptionHandler);
         } else {
-            thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-                public void uncaughtException(Thread t, Throwable e) {
-                    LOGGER.error("unhandled exception in thread: " + t.getId() + ":" + t.getName(), e);
-                }
-            });
+            thread.setUncaughtExceptionHandler((t, e) -> LOGGER.error("unhandled exception in thread: " + t.getId() + ":" + t.getName(), e));
         }
 
         return thread;
@@ -102,7 +99,7 @@ public class NamingThreadFactory implements ThreadFactory {
 
     /**
      * Get the method invoker's class name
-     * 
+     *
      * @param depth
      * @return
      */
@@ -117,7 +114,7 @@ public class NamingThreadFactory implements ThreadFactory {
 
     /**
      * Get sequence for different naming prefix
-     * 
+     *
      * @param invoker
      * @return
      */

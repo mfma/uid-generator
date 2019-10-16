@@ -102,8 +102,8 @@ public class DefaultUidGeneratorTest {
      * Do generating
      */
     private void doGenerate(Set<Long> uidSet, int index) {
-        long uid = uidGenerator.getUID();
-        String parsedInfo = uidGenerator.parseUID(uid);
+        long uid = uidGenerator.getUid();
+        String parsedInfo = uidGenerator.parseUid(uid);
         uidSet.add(uid);
 
         // Check UID is positive, and can be parsed

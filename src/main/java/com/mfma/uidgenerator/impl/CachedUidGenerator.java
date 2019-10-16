@@ -15,14 +15,6 @@
  */
 package com.mfma.uidgenerator.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.util.Assert;
-
 import com.mfma.uidgenerator.BitsAllocator;
 import com.mfma.uidgenerator.UidGenerator;
 import com.mfma.uidgenerator.buffer.BufferPaddingExecutor;
@@ -30,6 +22,13 @@ import com.mfma.uidgenerator.buffer.RejectedPutBufferHandler;
 import com.mfma.uidgenerator.buffer.RejectedTakeBufferHandler;
 import com.mfma.uidgenerator.buffer.RingBuffer;
 import com.mfma.uidgenerator.exception.UidGenerateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a cached implementation of {@link UidGenerator} extends
@@ -56,7 +55,6 @@ public class CachedUidGenerator extends DefaultUidGenerator implements Disposabl
 
     /** Spring properties */
     private int boostPower = DEFAULT_BOOST_POWER;
-    private int paddingFactor = RingBuffer.DEFAULT_PADDING_PERCENT;
     private Long scheduleInterval;
     
     private RejectedPutBufferHandler rejectedPutBufferHandler;
@@ -77,7 +75,7 @@ public class CachedUidGenerator extends DefaultUidGenerator implements Disposabl
     }
     
     @Override
-    public long getUID() {
+    public long getUid() {
         try {
             return ringBuffer.take();
         } catch (Exception e) {
@@ -87,12 +85,12 @@ public class CachedUidGenerator extends DefaultUidGenerator implements Disposabl
     }
 
     @Override
-    public String parseUID(long uid) {
-        return super.parseUID(uid);
+    public String parseUid(long uid) {
+        return super.parseUid(uid);
     }
     
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         bufferPaddingExecutor.shutdown();
     }
 
@@ -102,7 +100,7 @@ public class CachedUidGenerator extends DefaultUidGenerator implements Disposabl
      * @param currentSecond
      * @return UID list, size of {@link BitsAllocator#getMaxSequence()} + 1
      */
-    protected List<Long> nextIdsForOneSecond(long currentSecond) {
+    private List<Long> nextIdsForOneSecond(long currentSecond) {
         // Initialize result list size of (max sequence + 1)
         int listSize = (int) bitsAllocator.getMaxSequence() + 1;
         List<Long> uidList = new ArrayList<>(listSize);
@@ -122,6 +120,7 @@ public class CachedUidGenerator extends DefaultUidGenerator implements Disposabl
     private void initRingBuffer() {
         // initialize RingBuffer
         int bufferSize = ((int) bitsAllocator.getMaxSequence() + 1) << boostPower;
+        int paddingFactor = RingBuffer.DEFAULT_PADDING_PERCENT;
         this.ringBuffer = new RingBuffer(bufferSize, paddingFactor);
         LOGGER.info("Initialized ring buffer size:{}, paddingFactor:{}", bufferSize, paddingFactor);
 

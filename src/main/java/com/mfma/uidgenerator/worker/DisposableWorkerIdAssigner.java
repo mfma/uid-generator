@@ -15,8 +15,8 @@
  */
 package com.mfma.uidgenerator.worker;
 
-import com.mfma.uidgenerator.utils.DockerUtils;
-import com.mfma.uidgenerator.utils.NetUtils;
+import com.mfma.uidgenerator.utils.AbstractDockerUtils;
+import com.mfma.uidgenerator.utils.AbstractNetUtils;
 import com.mfma.uidgenerator.worker.dao.WorkerNodeDAO;
 import com.mfma.uidgenerator.worker.entity.WorkerNodeEntity;
 import org.apache.commons.lang.math.RandomUtils;
@@ -27,9 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 /**
- * Represents an implementation of {@link WorkerIdAssigner}, 
+ * Represents an implementation of {@link WorkerIdAssigner},
  * the worker id will be discarded after assigned to the UidGenerator
- * 
+ *
  * @author yutianbao
  */
 public class DisposableWorkerIdAssigner implements WorkerIdAssigner {
@@ -42,11 +42,11 @@ public class DisposableWorkerIdAssigner implements WorkerIdAssigner {
      * Assign worker id base on database.<p>
      * If there is host name & port in the environment, we considered that the node runs in Docker container<br>
      * Otherwise, the node runs on an actual machine.
-     * 
+     *
      * @return assigned worker id
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public long assignWorkerId() {
         // build worker node entity
         WorkerNodeEntity workerNodeEntity = buildWorkerNode();
@@ -63,14 +63,14 @@ public class DisposableWorkerIdAssigner implements WorkerIdAssigner {
      */
     private WorkerNodeEntity buildWorkerNode() {
         WorkerNodeEntity workerNodeEntity = new WorkerNodeEntity();
-        if (DockerUtils.isDocker()) {
+        if (AbstractDockerUtils.isDocker()) {
             workerNodeEntity.setType(WorkerNodeType.CONTAINER.value());
-            workerNodeEntity.setHostName(DockerUtils.getDockerHost());
-            workerNodeEntity.setPort(DockerUtils.getDockerPort());
+            workerNodeEntity.setHostName(AbstractDockerUtils.getDockerHost());
+            workerNodeEntity.setPort(AbstractDockerUtils.getDockerPort());
 
         } else {
             workerNodeEntity.setType(WorkerNodeType.ACTUAL.value());
-            workerNodeEntity.setHostName(NetUtils.getLocalAddress());
+            workerNodeEntity.setHostName(AbstractNetUtils.getLocalAddress());
             workerNodeEntity.setPort(System.currentTimeMillis() + "-" + RandomUtils.nextInt(100000));
         }
 

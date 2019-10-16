@@ -15,26 +15,26 @@
  */
 package com.mfma.uidgenerator.utils;
 
+import org.apache.commons.lang.time.DateFormatUtils;
+
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-
-import org.apache.commons.lang.time.DateFormatUtils;
 
 /**
  * DateUtils provides date formatting, parsing
  *
  * @author yutianbao
  */
-public abstract class DateUtils extends org.apache.commons.lang.time.DateUtils {
+public abstract class AbstractDateUtils extends org.apache.commons.lang.time.DateUtils {
     /**
      * Patterns
      */
-    public static final String DAY_PATTERN = "yyyy-MM-dd";
-    public static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final String DAY_PATTERN = "yyyy-MM-dd";
+    private static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String DATETIME_MS_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 
-    public static final Date DEFAULT_DATE = DateUtils.parseByDayPattern("1970-01-01");
+    public static final Date DEFAULT_DATE = AbstractDateUtils.parseByDayPattern("1970-01-01");
 
     /**
      * Parse date by 'yyyy-MM-dd' pattern
@@ -64,7 +64,7 @@ public abstract class DateUtils extends org.apache.commons.lang.time.DateUtils {
      * @return
      * @throws RuntimeException when ParseException occurred
      */
-    public static Date parseDate(String str, String pattern) {
+    private static Date parseDate(String str, String pattern) {
         try {
             return parseDate(str, new String[]{pattern});
         } catch (ParseException e) {
@@ -89,7 +89,7 @@ public abstract class DateUtils extends org.apache.commons.lang.time.DateUtils {
      * @param date
      * @return
      */
-    public static String formatByDayPattern(Date date) {
+    private static String formatByDayPattern(Date date) {
         if (date != null) {
             return DateFormatUtils.format(date, DAY_PATTERN);
         } else {

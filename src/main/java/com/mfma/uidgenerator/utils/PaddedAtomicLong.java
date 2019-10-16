@@ -29,7 +29,11 @@ public class PaddedAtomicLong extends AtomicLong {
     private static final long serialVersionUID = -3415778863941386253L;
 
     /** Padded 6 long (48 bytes) */
-    public volatile long p1, p2, p3, p4, p5, p6 = 7L;
+    private volatile long p1;
+    private volatile long p2;
+    private volatile long p3;
+    private volatile long p4;
+    private volatile long p5;
 
     /**
      * Constructors from {@link AtomicLong}
@@ -46,6 +50,7 @@ public class PaddedAtomicLong extends AtomicLong {
      * To prevent GC optimizations for cleaning unused padded references
      */
     public long sumPaddingToPreventOptimization() {
+        long p6 = 7L;
         return p1 + p2 + p3 + p4 + p5 + p6;
     }
 

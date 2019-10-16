@@ -25,12 +25,12 @@ import java.util.Enumeration;
  * 
  * @author yutianbao
  */
-public abstract class NetUtils {
+public abstract class AbstractNetUtils {
 
     /**
      * Pre-loaded local address
      */
-    public static InetAddress localAddress;
+    private static InetAddress localAddress;
 
     static {
         try {
@@ -46,7 +46,7 @@ public abstract class NetUtils {
      * @return the local address
      * @throws SocketException the socket exception
      */
-    public static InetAddress getLocalInetAddress() throws SocketException {
+    private static InetAddress getLocalInetAddress() throws SocketException {
         // enumerates all network interfaces
         Enumeration<NetworkInterface> enu = NetworkInterface.getNetworkInterfaces();
 

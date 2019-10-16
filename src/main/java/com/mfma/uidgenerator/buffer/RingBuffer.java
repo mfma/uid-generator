@@ -15,12 +15,12 @@
  */
 package com.mfma.uidgenerator.buffer;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.mfma.uidgenerator.utils.PaddedAtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Represents a ring buffer based on array.<br>
@@ -107,7 +107,7 @@ public class RingBuffer {
      * @param uid
      * @return false means that the buffer is full, apply {@link RejectedPutBufferHandler}
      */
-    public synchronized boolean put(long uid) {
+    synchronized boolean put(long uid) {
         long currentTail = tail.get();
         long currentCursor = cursor.get();
 
@@ -185,21 +185,21 @@ public class RingBuffer {
     /**
      * Calculate slot index with the slot sequence (sequence % bufferSize) 
      */
-    protected int calSlotIndex(long sequence) {
+    private int calSlotIndex(long sequence) {
         return (int) (sequence & indexMask);
     }
 
     /**
      * Discard policy for {@link RejectedPutBufferHandler}, we just do logging
      */
-    protected void discardPutBuffer(RingBuffer ringBuffer, long uid) {
+    private void discardPutBuffer(RingBuffer ringBuffer, long uid) {
         LOGGER.warn("Rejected putting buffer for uid:{}. {}", uid, ringBuffer);
     }
     
     /**
      * Policy for {@link RejectedTakeBufferHandler}, throws {@link RuntimeException} after logging 
      */
-    protected void exceptionRejectedTakeBuffer(RingBuffer ringBuffer) {
+    private void exceptionRejectedTakeBuffer(RingBuffer ringBuffer) {
         LOGGER.warn("Rejected take buffer. {}", ringBuffer);
         throw new RuntimeException("Rejected take buffer. " + ringBuffer);
     }
@@ -248,13 +248,10 @@ public class RingBuffer {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RingBuffer [bufferSize=").append(bufferSize)
-               .append(", tail=").append(tail)
-               .append(", cursor=").append(cursor)
-               .append(", paddingThreshold=").append(paddingThreshold).append("]");
-        
-        return builder.toString();
+        return "RingBuffer [bufferSize=" + bufferSize +
+                ", tail=" + tail +
+                ", cursor=" + cursor +
+                ", paddingThreshold=" + paddingThreshold + "]";
     }
 
 }

@@ -100,16 +100,12 @@ public class BufferPaddingExecutor {
         this.uidProvider = uidProvider;
 
         // initialize thread pool
-//        int cores = Runtime.getRuntime().availableProcessors();
-//
-//        bufferPadExecutors = Executors.newFixedThreadPool(cores * 2, new NamingThreadFactory(WORKER_NAME));
         int cores = Runtime.getRuntime().availableProcessors();
         int corePoolSize = cores * 2;
         bufferPadExecutors = buildThreadPoolExecutor(corePoolSize);
 
         // initialize schedule thread
         if (usingSchedule) {
-            //bufferPadSchedule = Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory(SCHEDULE_NAME));
             bufferPadSchedule = buildScheduledExecutorService(corePoolSize);
         } else {
             bufferPadSchedule = null;
@@ -169,7 +165,7 @@ public class BufferPaddingExecutor {
     /**
      * Padding buffer in the thread pool
      */
-    public void asyncPadding() {
+    void asyncPadding() {
         bufferPadExecutors.submit(this::paddingBuffer);
     }
 

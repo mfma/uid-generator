@@ -15,10 +15,20 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <spring.version>4.2.5.RELEASE</spring.version>
+        <spring.version>5.2.0.RELEASE</spring.version>
         <mysql.version>8.0.17</mysql.version>
-        <slf4j-version>1.7.7</slf4j-version>
+        <slf4j-version>1.7.28</slf4j-version>
         <guava.version>28.1-jre</guava.version>
+        <junit.version>4.12</junit.version>
+        <druid.version>1.1.20</druid.version>
+        <logback.version>1.2.3</logback.version>
+        <commons.lang3.version>3.9</commons.lang3.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
+        <mybatis.version>3.5.2</mybatis.version>
+        <mybatis-spring.version>2.0.2</mybatis-spring.version>
+        <maven-source-plugin.verision>3.1.0</maven-source-plugin.verision>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     </properties>
 
     <!-- Dependencies -->
@@ -49,37 +59,40 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
-            <version>3.2.3</version>
+            <version>${mybatis.version}</version>
         </dependency>
+
+
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
-            <version>1.2.4</version>
+            <version>${mybatis-spring.version}</version>
         </dependency>
 
         <!-- Apache Commons -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
+            <version>${commons-collections.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>${commons.lang.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.9</version>
+            <version>${commons.lang3.version}</version>
         </dependency>
 
         <!-- Logger -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.3</version>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -96,7 +109,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -116,7 +129,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.0.19</version>
+            <version>${druid.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -138,12 +151,12 @@
                     <target>${jdk.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
-                <version>3.5.1</version>
+                <version>${maven-compiler-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${maven-source-plugin.verision}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

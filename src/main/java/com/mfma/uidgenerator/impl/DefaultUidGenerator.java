@@ -26,20 +26,20 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.mfma.uidgenerator.UidGenerator;
 import com.mfma.uidgenerator.exception.UidGenerateException;
-import com.mfma.uidgenerator.utils.DateUtils;
+import com.mfma.uidgenerator.utils.AbstractDateUtils;
 import com.mfma.uidgenerator.worker.WorkerIdAssigner;
 
 /**
  * Represents an implementation of {@link UidGenerator}
- *
+ * <p>
  * The unique id has 64bits (long), default allocated as blow:<br>
  * <li>sign: The highest bit is 0
  * <li>delta seconds: The next 28 bits, represents delta seconds since a customer epoch(2016-05-20 00:00:00.000).
- *                    Supports about 8.7 years until to 2024-11-20 21:24:16
+ * Supports about 8.7 years until to 2024-11-20 21:24:16
  * <li>worker id: The next 22 bits, represents the worker's id which assigns based on database, max id is about 420W
  * <li>sequence: The next 13 bits, represents a sequence within the same second, max for 8192/s<br><br>
- *
- * The {@link DefaultUidGenerator#parseUID(long)} is a tool method to parse the bits
+ * <p>
+ * The {@link DefaultUidGenerator#parseUid(long)} is a tool method to parse the bits
  *
  * <pre>{@code
  * +------+----------------------+----------------+-----------+
@@ -47,7 +47,7 @@ import com.mfma.uidgenerator.worker.WorkerIdAssigner;
  * +------+----------------------+----------------+-----------+
  *   1bit          28bits              22bits         13bits
  * }</pre>
- *
+ * <p>
  * You can also specified the bits by Spring property setting.
  * <li>timeBits: default as 28
  * <li>workerBits: default as 22
@@ -61,25 +61,31 @@ import com.mfma.uidgenerator.worker.WorkerIdAssigner;
 public class DefaultUidGenerator implements UidGenerator, InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUidGenerator.class);
 
-    /** Bits allocate */
-    protected int timeBits = 28;
-    protected int workerBits = 22;
-    protected int seqBits = 13;
+    /**
+     * Bits allocate
+     */
+    private int timeBits = 28;
+    private int workerBits = 22;
+    private int seqBits = 13;
 
-    /** Customer epoch, unit as second. For example 2016-05-20 (ms: 1463673600000)*/
-    protected String epochStr = "2016-05-20";
-    protected long epochSeconds = TimeUnit.MILLISECONDS.toSeconds(1463673600000L);
+    long epochSeconds = TimeUnit.MILLISECONDS.toSeconds(1463673600000L);
 
-    /** Stable fields after spring bean initializing */
-    protected BitsAllocator bitsAllocator;
-    protected long workerId;
+    /**
+     * Stable fields after spring bean initializing
+     */
+    BitsAllocator bitsAllocator;
+    long workerId;
 
-    /** Volatile fields caused by nextId() */
-    protected long sequence = 0L;
-    protected long lastSecond = -1L;
+    /**
+     * Volatile fields caused by nextId()
+     */
+    private long sequence = 0L;
+    private long lastSecond = -1L;
 
-    /** Spring property */
-    protected WorkerIdAssigner workerIdAssigner;
+    /**
+     * Spring property
+     */
+    private WorkerIdAssigner workerIdAssigner;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -96,7 +102,7 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
     }
 
     @Override
-    public long getUID() throws UidGenerateException {
+    public long getUid() throws UidGenerateException {
         try {
             return nextId();
         } catch (Exception e) {
@@ -106,7 +112,7 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
     }
 
     @Override
-    public String parseUID(long uid) {
+    public String parseUid(long uid) {
         long totalBits = BitsAllocator.TOTAL_BITS;
         long signBits = bitsAllocator.getSignBits();
         long timestampBits = bitsAllocator.getTimestampBits();
@@ -119,7 +125,7 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
         long deltaSeconds = uid >>> (workerIdBits + sequenceBits);
 
         Date thatTime = new Date(TimeUnit.SECONDS.toMillis(epochSeconds + deltaSeconds));
-        String thatTimeStr = DateUtils.formatByDateTimePattern(thatTime);
+        String thatTimeStr = AbstractDateUtils.formatByDateTimePattern(thatTime);
 
         // format as string
         return String.format("{\"UID\":\"%d\",\"timestamp\":\"%s\",\"workerId\":\"%d\",\"sequence\":\"%d\"}",
@@ -132,7 +138,7 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
      * @return UID
      * @throws UidGenerateException in the case: Clock moved backwards; Exceeds the max timestamp
      */
-    protected synchronized long nextId() {
+    private synchronized long nextId() {
         long currentSecond = getCurrentSecond();
 
         // Clock moved backwards, refuse to generate uid
@@ -149,7 +155,7 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
                 currentSecond = getNextSecond(lastSecond);
             }
 
-        // At the different second, sequence restart from zero
+            // At the different second, sequence restart from zero
         } else {
             sequence = 0L;
         }
@@ -211,8 +217,8 @@ public class DefaultUidGenerator implements UidGenerator, InitializingBean {
 
     public void setEpochStr(String epochStr) {
         if (StringUtils.isNotBlank(epochStr)) {
-            this.epochStr = epochStr;
-            this.epochSeconds = TimeUnit.MILLISECONDS.toSeconds(DateUtils.parseByDayPattern(epochStr).getTime());
+            //Customer epoch, unit as second. For example 2016-05-20 (ms: 1463673600000)
+            this.epochSeconds = TimeUnit.MILLISECONDS.toSeconds(AbstractDateUtils.parseByDayPattern(epochStr).getTime());
         }
     }
 }
