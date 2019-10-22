@@ -22,6 +22,7 @@ import com.mfma.uidgenerator.buffer.RejectedPutBufferHandler;
 import com.mfma.uidgenerator.buffer.RejectedTakeBufferHandler;
 import com.mfma.uidgenerator.buffer.RingBuffer;
 import com.mfma.uidgenerator.exception.UidGenerateException;
+import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
